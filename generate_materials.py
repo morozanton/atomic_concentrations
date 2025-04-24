@@ -4,9 +4,24 @@ import pandas as pd
 
 
 class ConcentrationConvertor:
-    AVOGADRO = 0.602
+    """
+    A class to calculate atomic concentrations of isotopes in a material based on its chemical composition and density.
+    """
 
     def __init__(self):
+        """
+        Initializes the ConcentrationConvertor by loading isotopic data from the NIST table,
+        prompting the user for input, and performing the initial calculation.
+
+        Attributes:
+            AVOGADRO (float): Avogadro's number in units of 1/(mol * g/cc).
+            data (pd.DataFrame): DataFrame containing isotopic data from the NIST table.
+            formula (str): Chemical formula of the material.
+            density (float): Density of the material in g/cc.
+            material_name (str): Name of the material, either user-provided or derived from the formula.
+        """
+
+        self.AVOGADRO = 0.602
         self.data = pd.read_csv("data/nist_isotopic_compositions.csv")
         self.data[
             ["element_atomic_weight", "isotope_atomic_mass", "isotopic_composition"]] = self.data[
@@ -23,6 +38,22 @@ class ConcentrationConvertor:
 
     @staticmethod
     def parse_formula(formula: str):
+        """
+         Parses a material definition into its constituent elements and their quantities.
+
+         Args:
+             formula (str): The chemical formula as a string (e.g., 'H2O', 'C2H4 B0.2').
+
+         Returns:
+             list[dict[str, float]]: A list of dictionaries where each dictionary represents
+             a component of the material, consisting of separate chemical elements and their quantities.
+             If no quantity is specified for an element, it defaults to 1.
+
+         Example:
+             Input: 'C2H4 B0.2'
+             Output: [{'C': 2.0, 'H': 4.0}, {'B': 0.2}]
+         """
+
         components = formula.split()
         composition = []
 
@@ -34,10 +65,68 @@ class ConcentrationConvertor:
 
     @staticmethod
     def get_isotope_code(atomic_number, mass_number) -> str:
+        """
+        Generates a unique isotope code based on the atomic number and mass number.
+
+        Args:
+            atomic_number (int): The atomic number of the element.
+            mass_number (int): The mass number of the isotope.
+
+        Returns:
+            str: A string representing the isotope code, formatted as a concatenation
+            of the atomic number and the mass number, where the mass number is zero-padded
+            to three digits.
+
+        Example:
+            Input: atomic_number=1, mass_number=2
+            Output: '1002'
+
+            Input: atomic_number=82, mass_number=207
+            Output: '82207'
+        """
+
         mass_formatted = f"{int(mass_number):03}"
         return str(int(atomic_number)) + mass_formatted
 
     def calculate(self, formula: str, density: float) -> None:
+        """
+        Calculates the atomic concentrations of isotopes in a material based on its element composition and density.
+
+        Performs the following steps:
+        1. Parses the material formula into its constituent elements and their quantities.
+        2. Computes the molecular mass of each material component.
+        3. Calculates the atomic concentration of each isotope using the material density and isotopic composition.
+        4. Generates a formatted output containing isotope codes and their atomic concentrations.
+
+        Args:
+            formula (str): The formula of the material (e.g., 'Al2O3', 'C2H4 B0.2').
+            density (float): The density of the material in g/cc.
+
+        Returns:
+            None: The results are printed to the console.
+
+        Output Format:
+            - First line: material name and density.
+            - Subsequent lines: isotope codes and their atomic concentrations in decimal notation.
+
+        Example:
+            Input: formula='H2O', density=1.0
+            Output:
+                m1        $ H2O; 1.0 g/cc
+                1001      6.674E-02
+                1002      3.326E-02
+                ...
+
+            Input: formula="Fe0.988 C0.001 Mn0.0045 Si0.0025 S0.0002 P0.0002", density=7.87
+            Output:
+                m1		$ Steel 10; 7.87 g/cc
+                6012	3.902425E-04
+                6013	4.220756E-06
+                14028	3.889341E-04
+                14029	1.975816E-05
+                ...
+        """
+
         output = [f"m1\t\t$ {self.material_name}; {density} g/cc\n"]
 
         components = self.parse_formula(formula)

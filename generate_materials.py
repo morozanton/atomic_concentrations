@@ -88,7 +88,7 @@ class ConcentrationConvertor:
         mass_formatted = f"{int(mass_number):03}"
         return str(int(atomic_number)) + mass_formatted
 
-    def calculate(self, formula: str, density: float) -> None:
+    def calculate(self, formula: str, density: float, threshold: float = 1e-6) -> None:
         """
         Calculates the atomic concentrations of isotopes in a material based on its element composition and density.
 
@@ -101,6 +101,7 @@ class ConcentrationConvertor:
         Args:
             formula (str): The formula of the material (e.g., 'Al2O3', 'C2H4 B0.2').
             density (float): The density of the material in g/cc.
+            threshold (float): minimum concentration threshold for isotopes to be included in the output.
 
         Returns:
             None: The results are printed to the console.
@@ -143,6 +144,8 @@ class ConcentrationConvertor:
                 for index, row in isotopes.iterrows():
                     if pd.notna(row["isotopic_composition"]):
                         atomic_concentration = f"{(common_factor * row["isotopic_composition"] * formula_units):.6E}"
+                        if float(atomic_concentration) < threshold:
+                            continue
                         isotope_code = self.get_isotope_code(atomic_number=row["atomic_number"],
                                                              mass_number=row["mass_number"])
                         output.append(f"{isotope_code}\t{atomic_concentration}\n")

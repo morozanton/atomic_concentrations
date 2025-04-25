@@ -1,4 +1,4 @@
-# Atomic Compositions
+# Atomic Concentrations
 
 Calculates atomic concentrations from chemical formula or material description.
 
@@ -182,7 +182,7 @@ Generates a unique isotope code based on the atomic number and mass number.
 
 ---
 
-### `calculate(formula: str, density: float) -> None`
+### `calculate(formula: str, density: float, threshold: float = 1e-6) -> None`
 
 Calculates the atomic concentrations of isotopes in a material based on its element composition and density.
 
@@ -190,6 +190,7 @@ Calculates the atomic concentrations of isotopes in a material based on its elem
 
 - **`formula` (str):** The formula of the material (e.g., 'Al2O3', 'C2H4 B0.2').
 - **`density` (float):** The density of the material in g/cc.
+- **`threshold` (float):** Minimum concentration threshold for isotopes to be included in the output.
 
 #### Returns:
 
@@ -246,4 +247,3 @@ Loads isotopic composition data from a CSV file into a pandas DataFrame.
 
 - **Input:** `file_path='data/isotopes.csv'`
 - **Output:** A DataFrame with columns such as 'Element', 'AtomicNumber', 'MassNumber', etc.
-

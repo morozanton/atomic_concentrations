@@ -35,7 +35,7 @@ Elements or compounds (e.g. *O2, Pb, C10H8O4*)
 Chemical composition(e.g. 'H2O', 'C2H4 B0.2'):
 ---> "H2O"
 Density (g / cc): "0.998"
-Material name(leave blank to use chemical formula):
+ChemicalCompound name(leave blank to use chemical formula):
 ```
 
 **Output:**
@@ -59,7 +59,7 @@ E.g. steel grades, concrete mixes.
 Chemical composition(e.g. 'H2O', 'C2H4 B0.2'):
 ---> "Fe0.988 C0.001 Mn0.0045 Si0.0025 S0.0002 P0.0002"
 Density (g / cc): "7.87"
-Material name(leave blank to use chemical formula): "Steel 10 (AISI 1010)"
+ChemicalCompound name(leave blank to use chemical formula): "Steel 10 (AISI 1010)"
 ```
 
 **Output:**
@@ -93,7 +93,7 @@ Chemical compounds with additives/impurities (e.g. '*H2O Mg0.002*')
 Chemical composition(e.g. 'H2O', 'C2H4 B0.2'):
 ---> "C2H4 B0.2"
 Density (g / cc): "0.99"
-Material name(leave blank to use chemical formula): "Borated polyethylene 20%"
+ChemicalCompound name(leave blank to use chemical formula): "Borated polyethylene 20%"
 ```
 
 **Output:**
@@ -198,7 +198,7 @@ Calculates the atomic concentrations of isotopes in a material based on its elem
 
 #### Output Format:
 
-- **First line:** Material name and density.
+- **First line:** ChemicalCompound name and density.
 - **Subsequent lines:** Isotope codes and their atomic concentrations in decimal notation.
 
 #### Example:

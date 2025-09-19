@@ -6,15 +6,10 @@ class Isotope:
     def __init__(self, atomic_number: int, mass_number: int, atomic_mass: float, abundance: float = 1.0):
         self.atomic_number = atomic_number
         self.mass_number = mass_number
-        self._isotope_code = self.isotope_code
+        self.isotope_code = str(int(self.atomic_number)) + f"{int(self.mass_number):03}"
         self.atomic_mass = atomic_mass
         self.abundance = abundance
         self.concentration = None
-
-    @property
-    def isotope_code(self):
-        return str(int(self.atomic_number)) + f"{int(self.mass_number):03}"
-
 
 class Element:
     def __init__(self, symbol: str):
@@ -117,11 +112,13 @@ class Material:
     def __init__(self, compound_fractions: dict, density: float, name: str | None = None):
         self.compound_fractions = compound_fractions
         self.parse_fractions()
+        self.isotopes = {}
 
         self.density = density
         self.name = name if name else self.compose_material_name()
         self.compounds = [ChemicalCompound(formula=compound, density=density) for compound in
                           self.compound_fractions.keys()]
+        self.recalculate_atomic_concentrations()
 
     def compose_material_name(self):
         if len(self.compound_fractions) == 1:
@@ -139,13 +136,17 @@ class Material:
     def recalculate_atomic_concentrations(self):
         for compound in self.compounds:
             for isotope in compound.isotopes:
-                isotope.concentration *= self.compound_fractions[compound.formula]
+                updated_concentration = isotope.concentration * self.compound_fractions[compound.formula]
+                if isotope in self.isotopes:
+                    self.isotopes[isotope.isotope_code] += updated_concentration
+                else:
+                    self.isotopes[isotope.isotope_code] = updated_concentration
 
     def __str__(self):
         material_string = [f"$ {self.name};\t{self.density} g/cm3"]
-        for comp in self.compounds:
-            for iso in comp.isotopes:
-                material_string.append(f"{iso.isotope_code}\t{iso.concentration:.6E}")
+        isotopes = sorted([(iso, concent) for iso, concent in self.isotopes.items()], key=lambda x: int(x[0]))
+        for iso in isotopes:
+            material_string.append(f"{iso[0]}\t{iso[1]:.6E}")
         return "\n".join(material_string)
 
 

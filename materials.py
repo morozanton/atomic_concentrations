@@ -11,6 +11,7 @@ class Isotope:
         self.abundance = abundance
         self.concentration = None
 
+
 class Element:
     def __init__(self, symbol: str):
         self.symbol = symbol
@@ -30,7 +31,8 @@ class StableElement(Element):
     def retrieve_natural_composition(self):
         isotopes = self.nist_data[self.nist_data["element"] == self.symbol]
 
-        for i, row in isotopes.iterrows():
+        for i in range(len(isotopes)):
+            row = isotopes.iloc[i]
             if pd.notna(row["isotopic_composition"]):
                 isotope = Isotope(atomic_number=row["atomic_number"],
                                   mass_number=row["mass_number"],
@@ -62,10 +64,11 @@ class RadioactiveElement(Element):
         isotope_data = self.nist_data[
             (self.nist_data["element"] == self.symbol) & (self.nist_data["mass_number"] == self.mass_number)
             ]
+        row = isotope_data.iloc[0]
         isotope = Isotope(
-            atomic_number=isotope_data["atomic_number"],
-            mass_number=isotope_data["mass_number"],
-            atomic_mass=isotope_data["isotope_atomic_mass"],
+            atomic_number=row["atomic_number"],
+            mass_number=row["mass_number"],
+            atomic_mass=row["isotope_atomic_mass"],
             abundance=1.0)
         self.isotopes.append(isotope)
 
@@ -151,5 +154,4 @@ class Material:
 
 
 if __name__ == "__main__":
-    water = Material({"BN": 1}, 2.1)
-    print(water)
+    ...
